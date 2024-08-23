@@ -38,13 +38,13 @@
                                     <td>
                                         <a href="EmployedController?action=details&id=${employed.id}" class="btn btn-info"><i class="fa fa-eye"></i> Details</a>
                                         <a href="EmployedController?action=edit&id=${employed.id}" class="btn btn-success"><i class="fa fa-pencil"></i> Edit</a>
-                                        <a href="EmployedController?action=delete&id=${employed.id}" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</a>
+                                        <a href="EmployedController?action=delete&id=${employed.id}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this employee?')"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
                                 </tr>
                             </c:forEach>
                             <c:if test="${employees.isEmpty()}">
                                 <tr>
-                                    <td colspan="6">No employees</td>
+                                    <td class="text-center text-danger fw-bold" colspan="6">No employees</td>
                                 </tr>
                             </c:if>
                         </tbody>
@@ -52,6 +52,5 @@
                 </div>
             </div>
         </div>
-        <a href="index.jsp">Home</a>
     </body>
 </html>
