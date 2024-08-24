@@ -113,6 +113,43 @@ public class EmployedDao {
         return employed;
     }
 
+    public ArrayList<Employed> searchByFirstNameAndLastName(String search) {
+        ArrayList<Employed> employedList = new ArrayList<>();
+        try {
+            connection = MySqlConnectionPool.getConnectionConfig();
+            statement = connection.prepareStatement("SELECT * FROM empleado WHERE first_name LIKE ? OR last_name LIKE ?");
+            statement.setString(1, "%" + search + "%");
+            statement.setString(2, "%" + search + "%");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                Date entryDate = resultSet.getDate("entry_date");
+                double salary = resultSet.getDouble("salary");
+                employedList.add(new Employed(id, firstName, lastName, entryDate, salary));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return employedList;
+    }
+
     public int update(Employed employed) {
         int result = 0;
         try {
@@ -141,12 +178,13 @@ public class EmployedDao {
         return result;
     }
 
-    public void deleteById(int id) {
+    public int deleteById(int id) {
+        int result = 0;
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
             statement = connection.prepareStatement("DELETE FROM empleado WHERE id = ?");
             statement.setInt(1, id);
-            statement.executeUpdate();
+            result = statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -161,5 +199,6 @@ public class EmployedDao {
                 e.printStackTrace();
             }
         }
+        return result;
     }
 }

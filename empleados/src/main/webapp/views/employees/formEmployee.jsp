@@ -13,19 +13,12 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title text-center fw-bold mt-3">
-                                        <c:choose>
-                                            <c:when test="${empty employee.firstName}">
-                                                New employee
-                                            </c:when>
-                                            <c:otherwise>
-                                                Edit employee
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </h4>
+                        ${employee.id == null ? 'New' : 'Edit'} employee
+                    </h4>
                     <hr>
                     <form
                         <c:choose>
-                            <c:when test="${empty employee.firstName}">
+                            <c:when test="${employee.id == null}">
                                 action="EmployedController?action=save"
                             </c:when>
                             <c:otherwise>
@@ -36,37 +29,51 @@
                     >
                         <div class="input-group text-center">
                             <div class="mb-3 w-50 mx-auto">
-                                <label for="firstName" class="form-label">First Name</label>
-                                <input value="${employee.firstName}" type="text" class="form-control" id="firstName" name="firstName" required>
+                                <label for="firstName" class="form-label fw-bold">First Name</label>
+                                <div class="input-group">
+                                    <input value="${employee.firstName}" type="text" class="form-control border-primary" id="firstName" name="firstName" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('firstName').value='';">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="mb-3 w-50 mx-auto">
-                                <label for="lastName" class="form-label">Last Name</label>
-                                <input value="${employee.lastName}" type="text" class="form-control" id="lastName" name="lastName" required>
+                                <label for="lastName" class="form-label fw-bold">Last Name</label>
+                                <div class="input-group">
+                                    <input value="${employee.lastName}" type="text" class="form-control border-primary" id="lastName" name="lastName" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('lastName').value='';">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <div class="input-group text-center">
                             <div class="mb-3 w-50 mx-auto">
-                                <label for="entryDate" class="form-label">Entry Date</label>
-                                <input value="${employee.entryDate}" type="date" class="form-control" id="entryDate" name="entryDate" required>
+                                <label for="entryDate" class="form-label fw-bold">Entry Date</label>
+                                <div class="input-group">
+                                    <input value="${employee.entryDate}" type="date" class="form-control border-primary" id="entryDate" name="entryDate" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('entryDate').value='';">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="mb-3 w-50 mx-auto">
-                                <label for="salary" class="form-label">Salary</label>
-                                <input value="${employee.salary}" type="number" class="form-control" id="salary" name="salary" required>
+                                <label for="salary" class="form-label fw-bold">Salary</label>
+                                <div class="input-group">
+                                    <input value="${employee.salary}" type="number" class="form-control border-primary" id="salary" name="salary" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('salary').value='';">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>
-                                <c:choose>
-                                    <c:when test="${empty employee.firstName}">
-                                        Save
-                                    </c:when>
-                                    <c:otherwise>
-                                        Update
-                                    </c:otherwise>
-                                </c:choose>
+                                ${employee.id == null ? 'Save' : 'Update'}
                             </button>
-                            <a href="EmployedController?action=list" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+                            <button type="button" class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</button>
                         </div>
                     </form>
                 </div>

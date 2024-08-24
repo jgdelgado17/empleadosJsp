@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 
 @WebServlet("/EmployedController")
 public class EmployedController extends HttpServlet {
@@ -20,14 +21,14 @@ public class EmployedController extends HttpServlet {
     private final String formEmployee = "/views/employees/formEmployee.jsp";
     private final String pgDetails = "/views/employees/detailsEmployee.jsp";
 
-    protected void create(HttpServletRequest request, HttpServletResponse response)
+    private void create(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         request.setAttribute("employee", new Employed());
         request.getRequestDispatcher(formEmployee).forward(request, response);
 
     }
 
-    protected void save(HttpServletRequest request, HttpServletResponse response)
+    private void save(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
@@ -41,14 +42,16 @@ public class EmployedController extends HttpServlet {
         int result = employedDao.save(employee);
 
         if (result > 0) {
+            request.getSession().setAttribute("success", "Employee created");
             response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
         } else {
+            request.getSession().setAttribute("error", "Employee not created");
             request.setAttribute("employee", employee);
             request.getRequestDispatcher(formEmployee).forward(request, response);
         }
     }
 
-    protected void list(HttpServletRequest request, HttpServletResponse response)
+    private void list(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("text/html;charset=UTF-8");
 
@@ -57,7 +60,69 @@ public class EmployedController extends HttpServlet {
 
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    private void details(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Employed employed = employedDao.findById(id);
+        if (employed != null) {
+            request.setAttribute("employee", employed);
+            request.getRequestDispatcher(pgDetails).forward(request, response);
+        }else{
+            request.getSession().setAttribute("error", "Employee with id " + id + " not found");
+            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+        }
+    }
+
+    private void search(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String search = request.getParameter("searchByName");
+        request.setAttribute("employees", employedDao.searchByFirstNameAndLastName(search));
+        if (search.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+        }else{
+            request.getRequestDispatcher(pgList).forward(request, response);
+        }
+    }
+
+    private void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Employed employed = employedDao.findById(id);
+        if (employed != null) {
+            request.setAttribute("employee", employed);
+            request.getRequestDispatcher(formEmployee).forward(request, response);
+        }else{
+            request.getSession().setAttribute("error", "Employee with id " + id + " not found");
+            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+        }
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Employed employed = Employed.builder()
+                .id(Integer.parseInt(request.getParameter("id")))
+                .firstName(request.getParameter("firstName"))
+                .lastName(request.getParameter("lastName"))
+                .entryDate(Date.valueOf(request.getParameter("entryDate")))
+                .salary(Double.parseDouble(request.getParameter("salary")))
+                .build();
+        int result = employedDao.update(employed);
+        if (result > 0) {
+            request.getSession().setAttribute("success", "Employee with id " + employed.getId() + " updated");
+        } else {
+            request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " not found");
+        }
+        response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+    }
+
+    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        int result = employedDao.deleteById(id);
+        if (result > 0) {
+            request.getSession().setAttribute("success", "Employee with id " + id + " deleted");
+        } else {
+            request.getSession().setAttribute("error", "Employee with id " + id + " not found");
+        }
+        response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("text/html;charset=UTF-8");
 
@@ -73,30 +138,19 @@ public class EmployedController extends HttpServlet {
                 list(request, response);
                 break;
             case "details":
-                int idDetails = Integer.parseInt(request.getParameter("id"));
-                request.setAttribute("employee", employedDao.findById(idDetails));
-                request.getRequestDispatcher(pgDetails).forward(request, response);
+                details(request, response);
+                break;
+            case "search":
+                search(request, response);
                 break;
             case "edit":
-                int idUpdate = Integer.parseInt(request.getParameter("id"));
-                request.setAttribute("employee", employedDao.findById(idUpdate));
-                request.getRequestDispatcher(formEmployee).forward(request, response);
+                edit(request, response);
                 break;
             case "update":
-                Employed employed = new Employed(
-                        Integer.parseInt(request.getParameter("id")),
-                        request.getParameter("firstName"),
-                        request.getParameter("lastName"),
-                        Date.valueOf(request.getParameter("entryDate")),
-                        Double.parseDouble(request.getParameter("salary"))
-                );
-                employedDao.update(employed);
-                response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+                update(request, response);
                 break;
             case "delete":
-                int id = Integer.parseInt(request.getParameter("id"));
-                employedDao.deleteById(id);
-                response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+                delete(request, response);
                 break;
             default:
                 throw new AssertionError();
