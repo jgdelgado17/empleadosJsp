@@ -17,9 +17,10 @@
                     <div class="d-flex align-items-center">
                         <div class="input-group">
                             <input type="hidden" name="action" value="search">
-                            <input type="text" id="searchByName" class="form-control-sm  me-2 border-primary" placeholder="Type here to search"
-                                name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1" maxlength="20"
+                            <input type="text" id="searchByName" class="form-control-sm w-50 border-primary" placeholder="Type here to search by name or last name"
+                                name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1" maxlength="50"
                                 value="${searchQuery != null ? searchQuery : ''}">
+                            <a href="EmployedController?action=list" class="btn btn-outline-secondary"><i class="fa fa-times"></i></a>
                         </div>
 
                         <div class="d-flex justify-content-end mb-3 ms-5">
@@ -64,9 +65,6 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end mb-3">
-                <button href="EmployedController?action=list" class="btn btn-primary btn-sm"><i class="fa fa-undo"></i> Back</button>
             </div>
         </div>
     </body>
