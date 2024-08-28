@@ -75,6 +75,7 @@ public class EmployedController extends HttpServlet {
     private void search(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String search = request.getParameter("searchByName");
         request.setAttribute("employees", employedDao.searchByFirstNameAndLastName(search));
+        request.setAttribute("searchQuery", search);  // Agregar el valor de búsqueda
         if (search.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
         }else{

@@ -6,6 +6,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="${pageContext.request.contextPath}/js/scripts.js"></script>
         <title>Employees</title>
     </head>
     <body>
@@ -13,21 +14,23 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title text-center fw-bold mt-3">List of employees</h4>
-                    <div class="d-flex justify-content-end mb-3">
-                        <a href="EmployedController?action=create" class="btn btn-info btn-sm"><i class="fa fa-plus-circle"></i> New</a>
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <form action="EmployedController" method="GET" class="d-flex w-100">
+                    <div class="d-flex align-items-center">
+                        <div class="input-group">
                             <input type="hidden" name="action" value="search">
-                            <input type="text" class="form-control me-2 border-primary" placeholder="Type here to search by name or last name" name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1">
-                            <button class="btn btn-sm btn-primary"><i class="fa fa-search"></i> Search</button>
-                        </form>
+                            <input type="text" id="searchByName" class="form-control-sm  me-2 border-primary" placeholder="Type here to search"
+                                name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1" maxlength="20"
+                                value="${searchQuery != null ? searchQuery : ''}">
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-3 ms-5">
+                            <a href="EmployedController?action=create" class="btn btn-info btn-sm"><i class="fa fa-plus-circle "></i> New</a>
+                        </div>
                     </div>
 
                     <jsp:include page="../shared/messages.jsp" />
+                    <jsp:include page="../shared/modalConfirmation.jsp" />
 
-                    <table class="table table-striped table-hover table-bordered mt-3" >
+                    <table class="table table-striped table-hover table-bordered mt-3" id="employeesTable" >
                         <thead class="table-dark text-center">
                             <tr>
                                 <th>Id</th>
@@ -49,7 +52,7 @@
                                     <td class="text-center">
                                         <a href="EmployedController?action=details&id=${employed.id}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Details</a>
                                         <a href="EmployedController?action=edit&id=${employed.id}" class="btn btn-success btn-sm"><i class="fa fa-pencil"></i> Edit</a>
-                                        <a href="EmployedController?action=delete&id=${employed.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this employee?')"><i class="fa fa-trash"></i> Delete</a>
+                                        <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalConfirm" data-id="${employed.id}" data-name="${employed.firstName} ${employed.lastName} with id ${employed.id}"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -61,6 +64,9 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <button href="EmployedController?action=list" class="btn btn-primary btn-sm"><i class="fa fa-undo"></i> Back</button>
             </div>
         </div>
     </body>
