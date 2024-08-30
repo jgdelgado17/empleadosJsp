@@ -24,14 +24,36 @@ public class EmployedController extends HttpServlet {
     private String pageStr = "";
     private int currentPage = 1;
 
-    private void create(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Shows the form for creating a new employee
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     */
+    private void createEmployee(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         request.setAttribute("employee", new Employed());
         request.getRequestDispatcher(formEmployee).forward(request, response);
 
     }
 
-    private void save(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Saves a new employee in the database
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     *
+     * <p>
+     * This method creates a new <code>Employed</code> object from the request
+     * parameters, saves it in the database using the <code>employedDao</code>
+     * and redirects to the list page if the save is successful or forwards back
+     * to the form page if there's an error.
+     */
+    private void saveEmployee(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
@@ -54,6 +76,19 @@ public class EmployedController extends HttpServlet {
         }
     }
 
+    /**
+     * Lists all employees in the database, paginated by page and rows.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     *
+     * <p>
+     * This method retrieves the list of employees from the database using the
+     * <code>employedDao</code>, sets the request attributes and forwards the
+     * request to the list page.
+     */
     private void listAllEmployees(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         pageStr = request.getParameter("page");
@@ -71,7 +106,21 @@ public class EmployedController extends HttpServlet {
         request.getRequestDispatcher(pgList).forward(request, response);
     }
 
-    private void search(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    /**
+     * Searches employees in the database by first name or last name.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     *
+     * <p>
+     * This method retrieves the list of employees from the database using the
+     * <code>employedDao</code>, sets the request attributes and forwards the
+     * request to the list page if the search query is not empty. If the search
+     * query is empty, it redirects to the list page.
+     */
+    private void searchEmployeeByFirstNameOrLastName(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String search = request.getParameter("searchByName");
         request.setAttribute("employees", employedDao.searchEmployedByFirstNameOrLastName(search));
         request.setAttribute("searchQuery", search);
@@ -82,7 +131,22 @@ public class EmployedController extends HttpServlet {
         }
     }
 
-    private void details(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * Shows the details of an employee.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     *
+     * <p>
+     * This method finds an employee in the database by id using the
+     * <code>employedDao</code>, sets the request attributes and forwards the
+     * request to the details page if the employee is found. If the employee is
+     * not found, it sets an error message in the session and redirects to the
+     * list page.
+     */
+    private void detailsEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Employed employed = employedDao.findEmployedById(id);
         if (employed != null) {
@@ -94,7 +158,22 @@ public class EmployedController extends HttpServlet {
         }
     }
 
-    private void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * Shows the form for editing an existing employee.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     *
+     * <p>
+     * This method finds an employee in the database by id using the
+     * <code>employedDao</code>, sets the request attributes and forwards the
+     * request to the form page if the employee is found. If the employee is
+     * not found, it sets an error message in the session and redirects to the
+     * list page.
+     */
+    private void editEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Employed employed = employedDao.findEmployedById(id);
         if (employed != null) {
@@ -106,7 +185,20 @@ public class EmployedController extends HttpServlet {
         }
     }
 
-    private void update(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     * Updates an employee in the database.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException if there's an error with the input/output
+     *
+     * <p>
+     * This method creates a new <code>Employed</code> object from the request
+     * parameters, saves it in the database using the <code>employedDao</code>
+     * and redirects to the list page if the update is successful or forwards back
+     * to the form page if there's an error.
+     */
+    private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Employed employed = Employed.builder()
                 .id(Integer.parseInt(request.getParameter("id")))
                 .firstName(request.getParameter("firstName"))
@@ -123,7 +215,19 @@ public class EmployedController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/EmployedController?action=list&page=" + currentPage);
     }
 
-    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     * Deletes an employee from the database.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException if there's an error with the input/output
+     *
+     * <p>
+     * This method deletes an employee from the database using the
+     * <code>employedDao</code> and redirects to the list page if to delete
+     * is successful or forwards back to the list page if there's an error.
+     */
+    private void deleteEmployee(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         int result = employedDao.deleteEmployedById(id);
         if (result > 0) {
@@ -134,6 +238,18 @@ public class EmployedController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
     }
 
+    /**
+     * Processes the request and forwards or redirects to the appropriate page.
+     * <p>
+     * This method checks the value of the {@code action} parameter and calls the
+     * appropriate method to handle the request. If the request is not recognized,
+     * it throws an {@link AssertionError}.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException      if there's an error with the input/output
+     * @throws ServletException if there's an error with the servlet
+     */
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("text/html;charset=UTF-8");
@@ -141,28 +257,28 @@ public class EmployedController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "create":
-                create(request, response);
+                createEmployee(request, response);
                 break;
             case "save":
-                save(request, response);
+                saveEmployee(request, response);
                 break;
             case "list":
                 listAllEmployees(request, response);
                 break;
             case "details":
-                details(request, response);
+                detailsEmployee(request, response);
                 break;
             case "search":
-                search(request, response);
+                searchEmployeeByFirstNameOrLastName(request, response);
                 break;
             case "edit":
-                edit(request, response);
+                editEmployee(request, response);
                 break;
             case "update":
-                update(request, response);
+                updateEmployee(request, response);
                 break;
             case "delete":
-                delete(request, response);
+                deleteEmployee(request, response);
                 break;
             default:
                 throw new AssertionError();
@@ -170,24 +286,56 @@ public class EmployedController extends HttpServlet {
 
     }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException       if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException       if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>PUT</code> method.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException       if an I/O error occurs
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>DELETE</code> method.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException       if an I/O error occurs
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

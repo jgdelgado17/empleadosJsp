@@ -17,6 +17,11 @@ public class EmployedDao {
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
 
+    /**
+     * Saves a new employee in the database.
+     * @param employed the employee to be saved.
+     * @return the number of rows affected.
+     */
     public int saveEmployed(Employed employed) {
         int result = 0;
         try {
@@ -35,6 +40,12 @@ public class EmployedDao {
         return result;
     }
 
+    /**
+     * Finds all employees in the database, paginated by page and rows.
+     * @param page the page to be retrieved.
+     * @param rows the number of rows per page.
+     * @return a list of employees.
+     */
     public ArrayList<Employed> findAllEmployees(int page, int rows) {
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
@@ -59,6 +70,11 @@ public class EmployedDao {
         return employedList;
     }
 
+    /**
+     * Finds an employee in the database by id.
+     * @param id the id to be searched.
+     * @return the employee with the given id, or null if not found.
+     */
     public Employed findEmployedById(int id) {
         Employed employed = null;
         try {
@@ -81,6 +97,11 @@ public class EmployedDao {
         return employed;
     }
 
+    /**
+     * Finds employees in the database by first name or last name.
+     * @param search the string to be searched.
+     * @return a list of employees with the given first name or last name.
+     */
     public ArrayList<Employed> searchEmployedByFirstNameOrLastName(String search) {
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
@@ -105,6 +126,11 @@ public class EmployedDao {
         return employedList;
     }
 
+    /**
+     * Updates an employee in the database.
+     * @param employed the employee to be updated.
+     * @return the number of rows affected.
+     */
     public int updateEmployed(Employed employed) {
         int result = 0;
         try {
@@ -124,6 +150,11 @@ public class EmployedDao {
         return result;
     }
 
+    /**
+     * Deletes an employee from the database.
+     * @param id the id of the employee to be deleted.
+     * @return the number of rows affected.
+     */
     public int deleteEmployedById(int id) {
         int result = 0;
         try {
@@ -139,6 +170,10 @@ public class EmployedDao {
         return result;
     }
 
+    /**
+     * Counts the number of employees in the database.
+     * @return the number of employees.
+     */
     public int countEmployees() {
         int result = 0;
         try {
@@ -156,6 +191,17 @@ public class EmployedDao {
         return result;
     }
 
+    /**
+     * Closes the resources used in the DAO.
+     * <p>
+     * This method is called after every operation and closes the {@link ResultSet},
+     * {@link PreparedStatement} and {@link Connection} if they are not null.
+     * The resources are closed in a try-with-resources block to ensure that they are
+     * closed even if an exception is thrown.
+     * <p>
+     * If an exception is thrown when closing the resources, it is printed to the
+     * console.
+     */
     private void closeResources() {
         try {
             if (resultSet != null) {
