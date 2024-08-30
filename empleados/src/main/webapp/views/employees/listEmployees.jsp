@@ -64,6 +64,33 @@
                             </c:if>
                         </tbody>
                     </table>
+
+                    <!-- Paginación -->
+                    <div class="d-flex justify-content-center">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <c:if test="${currentPage > 1}">
+                                    <li class="page-item">
+                                        <a class="page-link" href="EmployedController?action=list&page=${currentPage - 1}">
+                                            <i class="fa fa-backward"></i> Previous
+                                        </a>
+                                    </li>
+                                </c:if>
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                        <a class="page-link" href="EmployedController?action=list&page=${i}">${i}</a>
+                                    </li>
+                                </c:forEach>
+                                <c:if test="${currentPage < totalPages}">
+                                    <li class="page-item">
+                                        <a class="page-link" href="EmployedController?action=list&page=${currentPage + 1}">
+                                            Next <i class="fa fa-forward"></i>
+                                        </a>
+                                    </li>
+                                </c:if>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>

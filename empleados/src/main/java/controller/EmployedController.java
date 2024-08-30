@@ -20,6 +20,9 @@ public class EmployedController extends HttpServlet {
     private final String pgList = "/views/employees/listEmployees.jsp";
     private final String formEmployee = "/views/employees/formEmployee.jsp";
     private final String pgDetails = "/views/employees/detailsEmployee.jsp";
+    private final int pageSize = 3;
+    private String pageStr = "";
+    private int currentPage = 1;
 
     private void create(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -39,7 +42,7 @@ public class EmployedController extends HttpServlet {
                 .entryDate(Date.valueOf(request.getParameter("entryDate")))
                 .salary(Double.parseDouble(request.getParameter("salary")))
                 .build();
-        int result = employedDao.save(employee);
+        int result = employedDao.saveEmployed(employee);
 
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee created");
@@ -51,18 +54,37 @@ public class EmployedController extends HttpServlet {
         }
     }
 
-    private void list(HttpServletRequest request, HttpServletResponse response)
+    private void listAllEmployees(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        response.setContentType("text/html;charset=UTF-8");
+        pageStr = request.getParameter("page");
+        currentPage = pageStr != null ? Integer.parseInt(pageStr) : 1;
 
-        request.setAttribute("employees", employedDao.findAll());
+        ArrayList<Employed> employees = employedDao.findAllEmployees(currentPage, pageSize);
+
+        int totalEmployees = employedDao.countEmployees();
+        int totalPages = (int) Math.ceil(totalEmployees / (double) pageSize);
+
+        request.setAttribute("employees", employees);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+
         request.getRequestDispatcher(pgList).forward(request, response);
+    }
 
+    private void search(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String search = request.getParameter("searchByName");
+        request.setAttribute("employees", employedDao.searchEmployedByFirstNameOrLastName(search));
+        request.setAttribute("searchQuery", search);
+        if (search.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list&page=" + currentPage);
+        }else{
+            request.getRequestDispatcher(pgList).forward(request, response);
+        }
     }
 
     private void details(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Employed employed = employedDao.findById(id);
+        Employed employed = employedDao.findEmployedById(id);
         if (employed != null) {
             request.setAttribute("employee", employed);
             request.getRequestDispatcher(pgDetails).forward(request, response);
@@ -72,20 +94,9 @@ public class EmployedController extends HttpServlet {
         }
     }
 
-    private void search(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String search = request.getParameter("searchByName");
-        request.setAttribute("employees", employedDao.searchByFirstNameAndLastName(search));
-        request.setAttribute("searchQuery", search);  // Agregar el valor de búsqueda
-        if (search.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
-        }else{
-            request.getRequestDispatcher(pgList).forward(request, response);
-        }
-    }
-
     private void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Employed employed = employedDao.findById(id);
+        Employed employed = employedDao.findEmployedById(id);
         if (employed != null) {
             request.setAttribute("employee", employed);
             request.getRequestDispatcher(formEmployee).forward(request, response);
@@ -103,18 +114,18 @@ public class EmployedController extends HttpServlet {
                 .entryDate(Date.valueOf(request.getParameter("entryDate")))
                 .salary(Double.parseDouble(request.getParameter("salary")))
                 .build();
-        int result = employedDao.update(employed);
+        int result = employedDao.updateEmployed(employed);
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee with id " + employed.getId() + " updated");
         } else {
             request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+        response.sendRedirect(request.getContextPath() + "/EmployedController?action=list&page=" + currentPage);
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        int result = employedDao.deleteById(id);
+        int result = employedDao.deleteEmployedById(id);
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee with id " + id + " deleted");
         } else {
@@ -136,7 +147,7 @@ public class EmployedController extends HttpServlet {
                 save(request, response);
                 break;
             case "list":
-                list(request, response);
+                listAllEmployees(request, response);
                 break;
             case "details":
                 details(request, response);

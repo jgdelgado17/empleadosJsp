@@ -17,7 +17,7 @@ public class EmployedDao {
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
 
-    public int save(Employed employed) {
+    public int saveEmployed(Employed employed) {
         int result = 0;
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
@@ -30,26 +30,18 @@ public class EmployedDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
         return result;
     }
 
-    public ArrayList<Employed> findAll() {
-
+    public ArrayList<Employed> findAllEmployees(int page, int rows) {
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
-            statement = connection.prepareStatement("SELECT * FROM empleado");
+            statement = connection.prepareStatement("SELECT * FROM empleado LIMIT ?, ?");
+            statement.setInt(1, (page - 1) * rows);
+            statement.setInt(2, rows);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
@@ -62,24 +54,12 @@ public class EmployedDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
         return employedList;
     }
 
-    public Employed findById(int id) {
+    public Employed findEmployedById(int id) {
         Employed employed = null;
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
@@ -96,24 +76,12 @@ public class EmployedDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
         return employed;
     }
 
-    public ArrayList<Employed> searchByFirstNameAndLastName(String search) {
+    public ArrayList<Employed> searchEmployedByFirstNameOrLastName(String search) {
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
@@ -132,25 +100,12 @@ public class EmployedDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
         return employedList;
     }
 
-    public int update(Employed employed) {
+    public int updateEmployed(Employed employed) {
         int result = 0;
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
@@ -164,21 +119,12 @@ public class EmployedDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
         return result;
     }
 
-    public int deleteById(int id) {
+    public int deleteEmployedById(int id) {
         int result = 0;
         try {
             connection = MySqlConnectionPool.getConnectionConfig();
@@ -188,17 +134,41 @@ public class EmployedDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
         return result;
+    }
+
+    public int countEmployees() {
+        int result = 0;
+        try {
+            connection = MySqlConnectionPool.getConnectionConfig();
+            statement = connection.prepareStatement("SELECT COUNT(*) FROM empleado");
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                result = resultSet.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return result;
+    }
+
+    private void closeResources() {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (statement != null) {
+                statement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
