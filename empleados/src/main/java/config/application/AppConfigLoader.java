@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class AppConfigLoader {
 
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
     static {
         try (InputStream input = MySqlConnectionPool.class.getClassLoader().getResourceAsStream("application.properties")) {
@@ -42,6 +42,6 @@ public class AppConfigLoader {
      * @return the associated value, or null if the key is not found
      */
     public static String getProperty(String key) {
-        return properties != null ? (String) properties.get(key) : null;
+        return (String) properties.get(key);
     }
 }

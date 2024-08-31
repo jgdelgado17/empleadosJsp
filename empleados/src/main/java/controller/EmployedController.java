@@ -13,19 +13,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @WebServlet("/EmployedController")
 public class EmployedController extends HttpServlet {
 
-    private EmployedDao employedDao = new EmployedDao();
+    private final EmployedDao employedDao = new EmployedDao();
     private final String PAGE_FORM = AppConfigLoader.getProperty("view.form.employees");
     private final String PAGE_LIST = AppConfigLoader.getProperty("view.list.employees");
     private final String PAGE_DETAILS = AppConfigLoader.getProperty("view.details.employees");
     private  final String ACTION = AppConfigLoader.getProperty("request.param.action");
     private final String PAGE = AppConfigLoader.getProperty("request.param.page");
     private final String LIST = AppConfigLoader.getProperty("action.list");
-    private final int pageSize = Integer.parseInt(AppConfigLoader.getProperty("view.list.pageSize"));
-    private String pageStr = "";
+    private final int pageSize = Integer.parseInt(Objects.requireNonNull(AppConfigLoader.getProperty("view.list.pageSize")));
     private int currentPage = 1;
 
     /**
@@ -95,7 +95,7 @@ public class EmployedController extends HttpServlet {
      */
     private void listAllEmployees(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        pageStr = request.getParameter("page");
+        String pageStr = request.getParameter("page");
         currentPage = pageStr != null ? Integer.parseInt(pageStr) : 1;
 
         ArrayList<Employed> employees = employedDao.findAllEmployees(currentPage, pageSize);
