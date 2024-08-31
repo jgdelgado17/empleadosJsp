@@ -1,33 +1,24 @@
-package config;
+package config.database;
 
 import java.sql.Connection;
 
 public class MySqlConnectionPool {
+
     /**
-     * Returns a connection to the database given the current configuration.
-     *
-     * The current configuration is given as follows:
-     * <ul>
-     * <li>database: empleados</li>
-     * <li>username: usuario</li>
-     * <li>password: usuariopassword</li>
-     * <li>host: localhost</li>
-     * <li>port: 3306</li>
-     * <li>url: jdbc:mysql://localhost:3306/empleados</li>
-     * <li>driver: com.mysql.cj.jdbc.Driver</li>
-     * </ul>
+     * Returns a connection to the database using the properties defined in
+     * the application.properties file.
      *
      * @return a connection to the database
      */
     public static Connection getConnectionConfig() {
         MySqlConnectionProperties connectionProperties = MySqlConnectionProperties.builder()
-                .database("empleados")
-                .username("usuario")
-                .password("usuariopassword")
-                .host("localhost")
-                .port("3306")
-                .url("jdbc:mysql://localhost:3306/empleados")
-                .driver("com.mysql.cj.jdbc.Driver")
+                .database(DbConfigLoader.getProperty("db.database"))
+                .username(DbConfigLoader.getProperty("db.username"))
+                .password(DbConfigLoader.getProperty("db.password"))
+                .host(DbConfigLoader.getProperty("db.host"))
+                .port(DbConfigLoader.getProperty("db.port"))
+                .url(DbConfigLoader.getProperty("db.url"))
+                .driver(DbConfigLoader.getProperty("db.driver"))
                 .build();
         return buildConnectionConfiguration(connectionProperties);
     }

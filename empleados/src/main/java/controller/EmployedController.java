@@ -1,5 +1,6 @@
 package controller;
 
+import config.application.AppConfigLoader;
 import dao.EmployedDao;
 import model.Employed;
 
@@ -17,10 +18,13 @@ import java.util.ArrayList;
 public class EmployedController extends HttpServlet {
 
     private EmployedDao employedDao = new EmployedDao();
-    private final String pgList = "/views/employees/listEmployees.jsp";
-    private final String formEmployee = "/views/employees/formEmployee.jsp";
-    private final String pgDetails = "/views/employees/detailsEmployee.jsp";
-    private final int pageSize = 3;
+    private final String PAGE_FORM = AppConfigLoader.getProperty("view.form.employees");
+    private final String PAGE_LIST = AppConfigLoader.getProperty("view.list.employees");
+    private final String PAGE_DETAILS = AppConfigLoader.getProperty("view.details.employees");
+    private  final String ACTION = AppConfigLoader.getProperty("request.param.action");
+    private final String PAGE = AppConfigLoader.getProperty("request.param.page");
+    private final String LIST = AppConfigLoader.getProperty("action.list");
+    private final int pageSize = Integer.parseInt(AppConfigLoader.getProperty("view.list.pageSize"));
     private String pageStr = "";
     private int currentPage = 1;
 
@@ -35,7 +39,7 @@ public class EmployedController extends HttpServlet {
     private void createEmployee(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         request.setAttribute("employee", new Employed());
-        request.getRequestDispatcher(formEmployee).forward(request, response);
+        request.getRequestDispatcher(PAGE_FORM).forward(request, response);
 
     }
 
@@ -68,11 +72,11 @@ public class EmployedController extends HttpServlet {
 
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee created");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST);
         } else {
             request.getSession().setAttribute("error", "Employee not created");
             request.setAttribute("employee", employee);
-            request.getRequestDispatcher(formEmployee).forward(request, response);
+            request.getRequestDispatcher(PAGE_FORM).forward(request, response);
         }
     }
 
@@ -103,7 +107,7 @@ public class EmployedController extends HttpServlet {
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
 
-        request.getRequestDispatcher(pgList).forward(request, response);
+        request.getRequestDispatcher(PAGE_LIST).forward(request, response);
     }
 
     /**
@@ -125,9 +129,9 @@ public class EmployedController extends HttpServlet {
         request.setAttribute("employees", employedDao.searchEmployedByFirstNameOrLastName(search));
         request.setAttribute("searchQuery", search);
         if (search.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list&page=" + currentPage);
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
         }else{
-            request.getRequestDispatcher(pgList).forward(request, response);
+            request.getRequestDispatcher(PAGE_LIST).forward(request, response);
         }
     }
 
@@ -151,10 +155,10 @@ public class EmployedController extends HttpServlet {
         Employed employed = employedDao.findEmployedById(id);
         if (employed != null) {
             request.setAttribute("employee", employed);
-            request.getRequestDispatcher(pgDetails).forward(request, response);
+            request.getRequestDispatcher(PAGE_DETAILS).forward(request, response);
         }else{
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST);
         }
     }
 
@@ -178,10 +182,10 @@ public class EmployedController extends HttpServlet {
         Employed employed = employedDao.findEmployedById(id);
         if (employed != null) {
             request.setAttribute("employee", employed);
-            request.getRequestDispatcher(formEmployee).forward(request, response);
+            request.getRequestDispatcher(PAGE_FORM).forward(request, response);
         }else{
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
         }
     }
 
@@ -212,7 +216,7 @@ public class EmployedController extends HttpServlet {
         } else {
             request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?action=list&page=" + currentPage);
+        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
     }
 
     /**
@@ -235,7 +239,7 @@ public class EmployedController extends HttpServlet {
         } else {
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?action=list");
+        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
     }
 
     /**

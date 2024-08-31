@@ -13,7 +13,7 @@ function handleSearchInput() {
     searchInput.addEventListener("keyup", function() {
         const query = this.value;
         const encodedQuery = encodeURIComponent(query);
-        window.location.href = "EmployedController?action=search&searchByName=" + encodedQuery;
+        window.location.href = "EmployedController?" + ACTION + "=" + SEARCH + "&searchByName=" + encodedQuery;
     });
 }
 
@@ -27,8 +27,8 @@ function focusAndMoveCursorToEnd() {
     searchField.focus();
 
     const value = searchField.value;
-    searchField.value = '';  // Vacía el campo temporalmente
-    searchField.value = value;  // Vuelve a asignar el valor para mover el cursor al final
+    searchField.value = '';
+    searchField.value = value;
 }
 
 /**
@@ -49,8 +49,14 @@ function setupDeleteModal() {
 
         document.getElementById('employeeName').textContent = employeeName;
 
+        /**
+         * Redirects the user to a URL that will delete the employee with the
+         * given 'employeeId'.
+         *
+         * @param {string} employeeId - The ID of the employee to delete.
+         */
         document.getElementById('confirmDelete').onclick = function() {
-            window.location.href = 'EmployedController?action=delete&id=' + employeeId;
+            window.location.href = 'EmployedController?' + ACTION + '=' + DELETE + '&id=' + employeeId;
         };
     });
 }

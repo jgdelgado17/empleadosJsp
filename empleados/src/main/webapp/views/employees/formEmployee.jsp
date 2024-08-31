@@ -1,5 +1,13 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%
+     final String SAVE = (String) application.getAttribute("action.save");
+     final String UPDATE = (String) application.getAttribute("action.update");
+     final String ACTION = (String) application.getAttribute("request.param.action");
+     final String PAGE = (String) application.getAttribute("request.param.page");
+%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,10 +27,10 @@
                     <form
                         <c:choose>
                             <c:when test="${employee.id == null}">
-                                action="EmployedController?action=save"
+                                action="EmployedController?<%= ACTION %>=<%= SAVE %>"
                             </c:when>
                             <c:otherwise>
-                                action="EmployedController?action=update&id=${employee.id}"
+                                action="EmployedController?<%= ACTION %>=<%= UPDATE %>&id=${employee.id}"
                             </c:otherwise>
                         </c:choose>
                         method="POST"

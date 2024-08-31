@@ -1,5 +1,6 @@
 package config;
 
+import config.database.MySqlConnectionPool;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;

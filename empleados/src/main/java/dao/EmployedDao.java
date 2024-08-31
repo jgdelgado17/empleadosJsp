@@ -1,6 +1,6 @@
 package dao;
 
-import config.MySqlConnectionPool;
+import config.database.MySqlConnectionPool;
 import lombok.Data;
 import model.Employed;
 
