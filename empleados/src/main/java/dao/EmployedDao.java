@@ -25,7 +25,7 @@ public class EmployedDao {
     public int saveEmployed(Employed employed) {
         int result = 0;
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("INSERT INTO empleado(first_name, last_name, entry_date, salary) VALUES(?, ?, ?, ?)");
             statement.setString(1, employed.getFirstName());
             statement.setString(2, employed.getLastName());
@@ -49,7 +49,7 @@ public class EmployedDao {
     public ArrayList<Employed> findAllEmployees(int page, int rows) {
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("SELECT * FROM empleado LIMIT ?, ?");
             statement.setInt(1, (page - 1) * rows);
             statement.setInt(2, rows);
@@ -78,7 +78,7 @@ public class EmployedDao {
     public Employed findEmployedById(int id) {
         Employed employed = null;
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("SELECT * FROM empleado WHERE id = ?");
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
@@ -105,7 +105,7 @@ public class EmployedDao {
     public ArrayList<Employed> searchEmployedByFirstNameOrLastName(String search) {
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("SELECT * FROM empleado WHERE first_name LIKE ? OR last_name LIKE ?");
             statement.setString(1, "%" + search + "%");
             statement.setString(2, "%" + search + "%");
@@ -134,7 +134,7 @@ public class EmployedDao {
     public int updateEmployed(Employed employed) {
         int result = 0;
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("UPDATE empleado SET first_name = ?, last_name = ?, entry_date = ?, salary = ? WHERE id = ?");
             statement.setString(1, employed.getFirstName());
             statement.setString(2, employed.getLastName());
@@ -158,7 +158,7 @@ public class EmployedDao {
     public int deleteEmployedById(int id) {
         int result = 0;
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("DELETE FROM empleado WHERE id = ?");
             statement.setInt(1, id);
             result = statement.executeUpdate();
@@ -177,7 +177,7 @@ public class EmployedDao {
     public int countEmployees() {
         int result = 0;
         try {
-            connection = MySqlConnectionPool.getConnectionConfig();
+            connection = MySqlConnectionPool.getConnection();
             statement = connection.prepareStatement("SELECT COUNT(*) FROM empleado");
             resultSet = statement.executeQuery();
             while (resultSet.next()) {

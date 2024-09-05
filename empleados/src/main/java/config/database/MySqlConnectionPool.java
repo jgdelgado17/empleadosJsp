@@ -10,7 +10,7 @@ public class MySqlConnectionPool {
      *
      * @return a connection to the database
      */
-    public static Connection getConnectionConfig() {
+    public static Connection getConnection() {
         MySqlConnectionProperties connectionProperties = MySqlConnectionProperties.builder()
                 .database(DbConfigLoader.getProperty("db.database"))
                 .username(DbConfigLoader.getProperty("db.username"))
