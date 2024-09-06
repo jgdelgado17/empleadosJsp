@@ -1,5 +1,6 @@
 package controller;
 
+import common.BuildUrl;
 import config.application.AppConfigLoader;
 import dao.EmployedDao;
 import model.Employed;
@@ -22,7 +23,6 @@ public class EmployedController extends HttpServlet {
     private final String PAGE_FORM = AppConfigLoader.getProperty("view.form.employees");
     private final String PAGE_LIST = AppConfigLoader.getProperty("view.list.employees");
     private final String PAGE_DETAILS = AppConfigLoader.getProperty("view.details.employees");
-    private  final String ACTION = AppConfigLoader.getProperty("request.param.action");
     private final String PAGE = AppConfigLoader.getProperty("request.param.page");
     private final String LIST = AppConfigLoader.getProperty("action.list");
     private final int PAGE_SIZE = Integer.parseInt(Objects.requireNonNull(AppConfigLoader.getProperty("view.list.pageSize")));
@@ -75,7 +75,7 @@ public class EmployedController extends HttpServlet {
 
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee created");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
+            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
         } else {
             request.getSession().setAttribute("error", "Employee not created");
             request.setAttribute("employee", employee);
@@ -139,7 +139,7 @@ public class EmployedController extends HttpServlet {
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("orderDirection", orderDirection);
         if (search.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
+            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
         }else{
             request.getRequestDispatcher(PAGE_LIST).forward(request, response);
         }
@@ -168,7 +168,7 @@ public class EmployedController extends HttpServlet {
             request.getRequestDispatcher(PAGE_DETAILS).forward(request, response);
         }else{
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST);
+            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
         }
     }
 
@@ -195,7 +195,7 @@ public class EmployedController extends HttpServlet {
             request.getRequestDispatcher(PAGE_FORM).forward(request, response);
         }else{
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
+            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
         }
     }
 
@@ -226,7 +226,7 @@ public class EmployedController extends HttpServlet {
         } else {
             request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
+        response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
     }
 
     /**
@@ -249,7 +249,7 @@ public class EmployedController extends HttpServlet {
         } else {
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
+        response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
     }
 
     /**

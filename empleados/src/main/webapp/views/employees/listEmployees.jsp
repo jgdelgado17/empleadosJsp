@@ -38,7 +38,7 @@
         <div class="container mt-3">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title text-center fw-bold mt-3">List of employees</h4>
+                    <h4 class="card-title text-center fw-bold mt-3">List of employees <i class="fa-solid fa-user"></i></h4>
                     <div class="d-flex align-items-center">
                         <div class="input-group">
                             <input type="hidden" name="action" value="${SEARCH}">
@@ -49,12 +49,20 @@
                         </div>
 
                         <div class="d-flex justify-content-end mb-3 ms-5">
-                            <a href="EmployedController?<%= ACTION %>=<%= CREATE %>" class="btn btn-info btn-sm"><i class="fa fa-plus-circle "></i> New</a>
+                            <a href="EmployedController?<%= ACTION %>=<%= CREATE %>" class="btn btn-info btn-sm">
+                                <i class="fa fa-plus-circle "></i> New <i class="fa-solid fa-user"></i>
+                            </a>
                         </div>
                     </div>
 
-                    <jsp:include page="../shared/messages.jsp" />
-                    <jsp:include page="../shared/modalConfirmation.jsp" />
+                    <%
+                        pageContext.setAttribute("FIRST_NAME", FIRST_NAME);
+                        pageContext.setAttribute("LAST_NAME", LAST_NAME);
+                        pageContext.setAttribute("ENTRY_DATE", ENTRY_DATE);
+                        pageContext.setAttribute("SALARY", SALARY);
+                        pageContext.setAttribute("ORDER_DESC", ORDER_DESC);
+                        pageContext.setAttribute("ORDER_ASC", ORDER_ASC);
+                    %>
 
                     <div class="table-responsive-lg">
                         <table class="table" id="employeesTable" >
@@ -63,24 +71,49 @@
                                     <th>Id</th>
                                     <th>
                                        First Name
-                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up-a-z"></i></a>
-                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down-z-a"></i></a>
+                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                          class="${fieldSort == FIRST_NAME && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
+                                          <i class="fa fa-arrow-up-a-z"></i>
+                                       </a>
+
+                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                          class="${fieldSort == FIRST_NAME && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
+                                          <i class="fa-solid fa-arrow-down-z-a"></i>
+                                       </a>
                                     </th>
                                     <th>
                                         Last Name
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up-a-z"></i></a>
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down-z-a"></i></a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                           class="${fieldSort == LAST_NAME && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
+                                            <i class="fa-solid fa-arrow-up-a-z"></i>
+                                        </a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                           class="${fieldSort == LAST_NAME && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
+                                           <i class="fa-solid fa-arrow-down-z-a"></i>
+                                        </a>
                                     </th>
                                     <th>
                                         Entry Date
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up"></i></a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                            class="${fieldSort == ENTRY_DATE && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
+                                            <i class="fa-solid fa-arrow-up"></i>
+                                        </a>
                                         <i class="fa-regular fa-calendar-days"></i>
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down"></i></a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                           class="${fieldSort == ENTRY_DATE && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
+                                           <i class="fa-solid fa-arrow-down"></i>
+                                        </a>
                                     </th>
                                     <th>
                                         Salary
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up-1-9"></i></a>
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down-9-1"></i></a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                            class="${fieldSort == SALARY && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
+                                            <i class="fa-solid fa-arrow-up-1-9"></i>
+                                        </a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                           class="${fieldSort == SALARY && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
+                                           <i class="fa-solid fa-arrow-down-9-1"></i>
+                                        </a>
                                     </th>
                                     <th>Actions</th>
                                 </tr>
@@ -109,7 +142,6 @@
                         </table>
                     </div>
 
-                    <!-- Paginación -->
                     <div class="d-flex justify-content-center">
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
