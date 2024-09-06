@@ -25,7 +25,10 @@ public class EmployedController extends HttpServlet {
     private  final String ACTION = AppConfigLoader.getProperty("request.param.action");
     private final String PAGE = AppConfigLoader.getProperty("request.param.page");
     private final String LIST = AppConfigLoader.getProperty("action.list");
-    private final int pageSize = Integer.parseInt(Objects.requireNonNull(AppConfigLoader.getProperty("view.list.pageSize")));
+    private final int PAGE_SIZE = Integer.parseInt(Objects.requireNonNull(AppConfigLoader.getProperty("view.list.pageSize")));
+    private final String ORDER_BY = AppConfigLoader.getProperty("request.param.sortBy");
+    private String fieldSort = AppConfigLoader.getProperty("request.param.sort.id");
+    private String orderDirection = AppConfigLoader.getProperty("request.param.sort.asc");
     private int currentPage = 1;
 
     /**
@@ -72,7 +75,7 @@ public class EmployedController extends HttpServlet {
 
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee created");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST);
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
         } else {
             request.getSession().setAttribute("error", "Employee not created");
             request.setAttribute("employee", employee);
@@ -81,28 +84,32 @@ public class EmployedController extends HttpServlet {
     }
 
     /**
-     * Lists all employees in the database, paginated by page and rows.
+     * Shows the list of all employees in the database, paginated by page.
+     * <p>
+     * This method retrieves the list of employees from the database using the
+     * <code>employedDao</code>, sets the request attributes and forwards the
+     * request to the list page.
      *
      * @param request  the request
      * @param response the response
      * @throws IOException      if there's an error with the input/output
      * @throws ServletException if there's an error with the servlet
-     *
-     * <p>
-     * This method retrieves the list of employees from the database using the
-     * <code>employedDao</code>, sets the request attributes and forwards the
-     * request to the list page.
      */
     private void listAllEmployees(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        String pageStr = request.getParameter("page");
-        currentPage = pageStr != null ? Integer.parseInt(pageStr) : 1;
+        String pageStr = request.getParameter(PAGE);
+        currentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
+        String fieldOrder = request.getParameter(ORDER_BY);
+        fieldSort = (fieldOrder != null) ? fieldOrder : fieldSort;
+        orderDirection = request.getParameter("orderDirection");
 
-        ArrayList<Employed> employees = employedDao.findAllEmployees(currentPage, pageSize);
+        ArrayList<Employed> employees = employedDao.findAllEmployees(currentPage, PAGE_SIZE, fieldSort, orderDirection);
 
         int totalEmployees = employedDao.countEmployees();
-        int totalPages = (int) Math.ceil(totalEmployees / (double) pageSize);
+        int totalPages = (int) Math.ceil(totalEmployees / (double) PAGE_SIZE);
 
+        request.setAttribute("orderDirection", orderDirection);
+        request.setAttribute("fieldSort", fieldSort);
         request.setAttribute("employees", employees);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
@@ -128,8 +135,11 @@ public class EmployedController extends HttpServlet {
         String search = request.getParameter("searchByName");
         request.setAttribute("employees", employedDao.searchEmployedByFirstNameOrLastName(search));
         request.setAttribute("searchQuery", search);
+        request.setAttribute("fieldSort", fieldSort);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("orderDirection", orderDirection);
         if (search.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
         }else{
             request.getRequestDispatcher(PAGE_LIST).forward(request, response);
         }
@@ -185,7 +195,7 @@ public class EmployedController extends HttpServlet {
             request.getRequestDispatcher(PAGE_FORM).forward(request, response);
         }else{
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
-            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
+            response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
         }
     }
 
@@ -216,7 +226,7 @@ public class EmployedController extends HttpServlet {
         } else {
             request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
+        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
     }
 
     /**
@@ -239,7 +249,7 @@ public class EmployedController extends HttpServlet {
         } else {
             request.getSession().setAttribute("error", "Employee with id " + id + " not found");
         }
-        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + PAGE + "=" + currentPage);
+        response.sendRedirect(request.getContextPath() + "/EmployedController?" + ACTION + "=" + LIST + "&" + ORDER_BY + "=" + fieldSort + "&orderDirection=" + orderDirection + "&" + PAGE + "=" + currentPage);
     }
 
     /**

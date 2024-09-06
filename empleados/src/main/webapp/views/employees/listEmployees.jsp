@@ -10,6 +10,14 @@
       final String SEARCH = (String) application.getAttribute("action.search");
       final String EDIT = (String) application.getAttribute("action.edit");
       final String DELETE = (String) application.getAttribute("action.delete");
+      final String SORT = (String) application.getAttribute("request.param.sortBy");
+      final String ORDER_ASC = (String) application.getAttribute("request.param.sort.asc");
+      final String ORDER_DESC = (String) application.getAttribute("request.param.sort.desc");
+      final String ID = (String) application.getAttribute("request.param.sort.id");
+      final String FIRST_NAME = (String) application.getAttribute("request.param.sort.first_name");
+      final String LAST_NAME = (String) application.getAttribute("request.param.sort.last_name");
+      final String ENTRY_DATE = (String) application.getAttribute("request.param.sort.entry_date");
+      final String SALARY = (String) application.getAttribute("request.param.sort.salary");
 %>
 
 <!DOCTYPE html>
@@ -37,7 +45,7 @@
                             <input type="text" id="searchByName" class="form-control-sm w-50 border-primary" placeholder="Type here to search by name or last name"
                                 name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1" maxlength="50"
                                 value="${searchQuery != null ? searchQuery : ''}">
-                            <a href="EmployedController?<%= ACTION %>=<%= LIST %>" class="btn btn-outline-secondary"><i class="fa fa-times"></i></a>
+                            <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage}" class="btn btn-outline-secondary"><i class="fa fa-times"></i></a>
                         </div>
 
                         <div class="d-flex justify-content-end mb-3 ms-5">
@@ -48,39 +56,58 @@
                     <jsp:include page="../shared/messages.jsp" />
                     <jsp:include page="../shared/modalConfirmation.jsp" />
 
-                    <table class="table table-striped table-hover table-bordered mt-3" id="employeesTable" >
-                        <thead class="table-dark text-center">
-                            <tr>
-                                <th>Id</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Entry Date</th>
-                                <th>Salary</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${employees}" var="employed">
+                    <div class="table-responsive-lg">
+                        <table class="table" id="employeesTable" >
+                            <thead class="table-dark text-center">
                                 <tr>
-                                    <td>${employed.id}</td>
-                                    <td>${employed.firstName}</td>
-                                    <td>${employed.lastName}</td>
-                                    <td>${employed.entryDate}</td>
-                                    <td>${employed.salary}</td>
-                                    <td class="text-center">
-                                        <a href="EmployedController?<%= ACTION %>=<%= DETAILS %>&id=${employed.id}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Details</a>
-                                        <a href="EmployedController?<%= ACTION %>=<%= EDIT %>&id=${employed.id}" class="btn btn-success btn-sm"><i class="fa fa-pencil"></i> Edit</a>
-                                        <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalConfirm" data-id="${employed.id}" data-name="${employed.firstName} ${employed.lastName} with id ${employed.id}"><i class="fa fa-trash"></i> Delete</a>
-                                    </td>
+                                    <th>Id</th>
+                                    <th>
+                                       First Name
+                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up-a-z"></i></a>
+                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down-z-a"></i></a>
+                                    </th>
+                                    <th>
+                                        Last Name
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up-a-z"></i></a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down-z-a"></i></a>
+                                    </th>
+                                    <th>
+                                        Entry Date
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up"></i></a>
+                                        <i class="fa-regular fa-calendar-days"></i>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down"></i></a>
+                                    </th>
+                                    <th>
+                                        Salary
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-up-1-9"></i></a>
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"><i class="fa-solid fa-arrow-down-9-1"></i></a>
+                                    </th>
+                                    <th>Actions</th>
                                 </tr>
-                            </c:forEach>
-                            <c:if test="${employees.isEmpty()}">
-                                <tr>
-                                    <td class="text-center text-danger fw-bold" colspan="6">No employees</td>
-                                </tr>
-                            </c:if>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${employees}" var="employed">
+                                    <tr>
+                                        <td>${employed.id}</td>
+                                        <td>${employed.firstName}</td>
+                                        <td>${employed.lastName}</td>
+                                        <td>${employed.entryDate}</td>
+                                        <td>${employed.salary}</td>
+                                        <td class="text-center">
+                                            <a href="EmployedController?<%= ACTION %>=<%= DETAILS %>&id=${employed.id}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Details</a>
+                                            <a href="EmployedController?<%= ACTION %>=<%= EDIT %>&id=${employed.id}" class="btn btn-success btn-sm"><i class="fa fa-pencil"></i> Edit</a>
+                                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalConfirm" data-id="${employed.id}" data-name="${employed.firstName} ${employed.lastName} with id ${employed.id}"><i class="fa fa-trash"></i> Delete</a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                <c:if test="${employees.isEmpty()}">
+                                    <tr>
+                                        <td class="text-center text-danger fw-bold" colspan="6">No employees</td>
+                                    </tr>
+                                </c:if>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Paginación -->
                     <div class="d-flex justify-content-center">
@@ -88,19 +115,19 @@
                             <ul class="pagination">
                                 <c:if test="${currentPage > 1}">
                                     <li class="page-item">
-                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= PAGE %>=${currentPage - 1}">
+                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage - 1}">
                                             <i class="fa fa-backward"></i> Previous
                                         </a>
                                     </li>
                                 </c:if>
                                 <c:forEach begin="1" end="${totalPages}" var="i">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= PAGE %>=${i}">${i}</a>
+                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${i}">${i}</a>
                                     </li>
                                 </c:forEach>
                                 <c:if test="${currentPage < totalPages}">
                                     <li class="page-item">
-                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= PAGE %>=${currentPage + 1}">
+                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage + 1}">
                                             Next <i class="fa fa-forward"></i>
                                         </a>
                                     </li>

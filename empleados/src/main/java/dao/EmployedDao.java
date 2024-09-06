@@ -42,15 +42,19 @@ public class EmployedDao {
 
     /**
      * Finds all employees in the database, paginated by page and rows.
-     * @param page the page to be retrieved.
+     * @param page the page number.
      * @param rows the number of rows per page.
+     * @param orderBy the field to order by.
+     * @param direction the direction of the order.
      * @return a list of employees.
      */
-    public ArrayList<Employed> findAllEmployees(int page, int rows) {
+    public ArrayList<Employed> findAllEmployees(int page, int rows, String orderBy, String direction) {
+        String fieldOrder = orderBy == null ? "id" : orderBy;
+        String orderDirection = direction == null ? "ASC" : direction;
         ArrayList<Employed> employedList = new ArrayList<>();
         try {
             connection = MySqlConnectionPool.getConnection();
-            statement = connection.prepareStatement("SELECT * FROM empleado LIMIT ?, ?");
+            statement = connection.prepareStatement("SELECT * FROM empleado ORDER BY " + fieldOrder + " " + orderDirection + " LIMIT ?, ?");
             statement.setInt(1, (page - 1) * rows);
             statement.setInt(2, rows);
             resultSet = statement.executeQuery();
