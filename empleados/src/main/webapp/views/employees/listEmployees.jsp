@@ -10,9 +10,10 @@
       final String SEARCH = (String) application.getAttribute("action.search");
       final String EDIT = (String) application.getAttribute("action.edit");
       final String DELETE = (String) application.getAttribute("action.delete");
-      final String SORT = (String) application.getAttribute("request.param.sortBy");
-      final String ORDER_ASC = (String) application.getAttribute("request.param.sort.asc");
-      final String ORDER_DESC = (String) application.getAttribute("request.param.sort.desc");
+      final String DELETE_MULTIPLE = (String) application.getAttribute("action.deleteMultiple");
+      final String ORDER_BY = (String) application.getAttribute("request.param.orderBy");
+      final String ORDER_ASC = (String) application.getAttribute("action.sort.asc");
+      final String ORDER_DESC = (String) application.getAttribute("action.sort.desc");
       final String ID = (String) application.getAttribute("request.param.sort.id");
       final String FIRST_NAME = (String) application.getAttribute("request.param.sort.first_name");
       final String LAST_NAME = (String) application.getAttribute("request.param.sort.last_name");
@@ -31,6 +32,7 @@
             const ACTION = "<%= ACTION %>";
             const SEARCH = "<%= SEARCH %>";
             const DELETE = "<%= DELETE %>";
+            const DELETE_MULTIPLE = "<%= DELETE_MULTIPLE %>";
         </script>
         <title>Employees</title>
     </head>
@@ -45,7 +47,7 @@
                             <input type="text" id="searchByName" class="form-control-sm w-50 border-primary" placeholder="Type here to search by name or last name"
                                 name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1" maxlength="50"
                                 value="${searchQuery != null ? searchQuery : ''}">
-                            <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage}" class="btn btn-outline-secondary"><i class="fa fa-times"></i></a>
+                            <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage}" class="btn btn-outline-secondary"><i class="fa fa-times"></i></a>
                         </div>
 
                         <div class="d-flex justify-content-end mb-3 ms-5">
@@ -64,53 +66,57 @@
                         pageContext.setAttribute("ORDER_ASC", ORDER_ASC);
                     %>
 
+                    <jsp:include page="../shared/messages.jsp" />
+                    <jsp:include page="../shared/modalConfirmation.jsp" />
+
                     <div class="table-responsive-lg">
                         <table class="table" id="employeesTable" >
                             <thead class="table-dark text-center">
                                 <tr>
+                                    <th>Select</th>
                                     <th>Id</th>
                                     <th>
                                        First Name
-                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
                                           class="${fieldSort == FIRST_NAME && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
                                           <i class="fa fa-arrow-up-a-z"></i>
                                        </a>
 
-                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                       <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= FIRST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
                                           class="${fieldSort == FIRST_NAME && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
                                           <i class="fa-solid fa-arrow-down-z-a"></i>
                                        </a>
                                     </th>
                                     <th>
                                         Last Name
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
                                            class="${fieldSort == LAST_NAME && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
                                             <i class="fa-solid fa-arrow-up-a-z"></i>
                                         </a>
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= LAST_NAME %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
                                            class="${fieldSort == LAST_NAME && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
                                            <i class="fa-solid fa-arrow-down-z-a"></i>
                                         </a>
                                     </th>
                                     <th>
                                         Entry Date
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
                                             class="${fieldSort == ENTRY_DATE && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
                                             <i class="fa-solid fa-arrow-up"></i>
                                         </a>
                                         <i class="fa-regular fa-calendar-days"></i>
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= ENTRY_DATE %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
                                            class="${fieldSort == ENTRY_DATE && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
                                            <i class="fa-solid fa-arrow-down"></i>
                                         </a>
                                     </th>
                                     <th>
                                         Salary
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= SALARY %>&orderDirection=<%= ORDER_ASC %>&<%= PAGE %>=${currentPage}"
                                             class="${fieldSort == SALARY && orderDirection == ORDER_ASC ? 'link-warning' : 'link-secondary'}">
                                             <i class="fa-solid fa-arrow-up-1-9"></i>
                                         </a>
-                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=<%= SALARY %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
+                                        <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=<%= SALARY %>&orderDirection=<%= ORDER_DESC %>&<%= PAGE %>=${currentPage}"
                                            class="${fieldSort == SALARY && orderDirection == ORDER_DESC ? 'link-warning' : 'link-secondary'}">
                                            <i class="fa-solid fa-arrow-down-9-1"></i>
                                         </a>
@@ -121,6 +127,9 @@
                             <tbody>
                                 <c:forEach items="${employees}" var="employed">
                                     <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" name="ids[]" value="${employed.id}">
+                                        </td>
                                         <td>${employed.id}</td>
                                         <td>${employed.firstName}</td>
                                         <td>${employed.lastName}</td>
@@ -141,25 +150,28 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <a href="#" id="deleteSelectedBtn" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete Selected</a>
+                    </div>
 
                     <div class="d-flex justify-content-center">
                         <nav aria-label="Page navigation">
                             <ul class="pagination">
                                 <c:if test="${currentPage > 1}">
                                     <li class="page-item">
-                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage - 1}">
+                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage - 1}">
                                             <i class="fa fa-backward"></i> Previous
                                         </a>
                                     </li>
                                 </c:if>
                                 <c:forEach begin="1" end="${totalPages}" var="i">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${i}">${i}</a>
+                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${i}">${i}</a>
                                     </li>
                                 </c:forEach>
                                 <c:if test="${currentPage < totalPages}">
                                     <li class="page-item">
-                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= SORT %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage + 1}">
+                                        <a class="page-link" href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage + 1}">
                                             Next <i class="fa fa-forward"></i>
                                         </a>
                                     </li>

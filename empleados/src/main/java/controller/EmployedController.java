@@ -26,9 +26,9 @@ public class EmployedController extends HttpServlet {
     private final String PAGE = AppConfigLoader.getProperty("request.param.page");
     private final String LIST = AppConfigLoader.getProperty("action.list");
     private final int PAGE_SIZE = Integer.parseInt(Objects.requireNonNull(AppConfigLoader.getProperty("view.list.pageSize")));
-    private final String ORDER_BY = AppConfigLoader.getProperty("request.param.sortBy");
+    private final String ORDER_BY = AppConfigLoader.getProperty("request.param.orderBy");
     private String fieldSort = AppConfigLoader.getProperty("request.param.sort.id");
-    private String orderDirection = AppConfigLoader.getProperty("request.param.sort.asc");
+    private String orderDirection = AppConfigLoader.getProperty("action.sort.asc");
     private int currentPage = 1;
 
     /**
@@ -65,20 +65,26 @@ public class EmployedController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        Employed employee = Employed.builder()
-                .firstName(request.getParameter("firstName"))
-                .lastName(request.getParameter("lastName"))
-                .entryDate(Date.valueOf(request.getParameter("entryDate")))
-                .salary(Double.parseDouble(request.getParameter("salary")))
-                .build();
-        int result = employedDao.saveEmployed(employee);
+        try {
+            Employed employee = Employed.builder()
+                    .firstName(request.getParameter("firstName"))
+                    .lastName(request.getParameter("lastName"))
+                    .entryDate(Date.valueOf(request.getParameter("entryDate")))
+                    .salary(Double.parseDouble(request.getParameter("salary")))
+                    .build();
+            int result = employedDao.saveEmployed(employee);
 
-        if (result > 0) {
-            request.getSession().setAttribute("success", "Employee created");
-            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
-        } else {
-            request.getSession().setAttribute("error", "Employee not created");
-            request.setAttribute("employee", employee);
+            if (result > 0) {
+                request.getSession().setAttribute("success", "Employee created");
+                response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
+            } else {
+                request.getSession().setAttribute("error", "Employee not created");
+                request.setAttribute("employee", employee);
+                request.getRequestDispatcher(PAGE_FORM).forward(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Error creating employee");
             request.getRequestDispatcher(PAGE_FORM).forward(request, response);
         }
     }
@@ -101,7 +107,8 @@ public class EmployedController extends HttpServlet {
         currentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
         String fieldOrder = request.getParameter(ORDER_BY);
         fieldSort = (fieldOrder != null) ? fieldOrder : fieldSort;
-        orderDirection = request.getParameter("orderDirection");
+        String order = request.getParameter("orderDirection");
+        orderDirection = (order != null) ? order : orderDirection;
 
         ArrayList<Employed> employees = employedDao.findAllEmployees(currentPage, PAGE_SIZE, fieldSort, orderDirection);
 
@@ -253,6 +260,29 @@ public class EmployedController extends HttpServlet {
     }
 
     /**
+     * Deletes multiple employees from the database.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws IOException if there's an error with the input/output
+     *
+     * <p>
+     * This method deletes multiple employees from the database using the
+     * <code>employedDao</code> and redirects to the list page if to delete
+     * is successful or forwards back to the list page if there's an error.
+     */
+    private void deleteMultipleEmployees(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String ids = request.getParameter("ids");
+        int result = employedDao.deleteMultipleEmployees(ids);
+        if (result > 0) {
+            request.getSession().setAttribute("success", "Employees deleted");
+        } else {
+            request.getSession().setAttribute("error", "Employees not found");
+        }
+        response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
+    }
+
+    /**
      * Processes the request and forwards or redirects to the appropriate page.
      * <p>
      * This method checks the value of the {@code action} parameter and calls the
@@ -293,6 +323,9 @@ public class EmployedController extends HttpServlet {
                 break;
             case "delete":
                 deleteEmployee(request, response);
+                break;
+            case "deleteMultiple":
+                deleteMultipleEmployees(request, response);
                 break;
             default:
                 throw new AssertionError();

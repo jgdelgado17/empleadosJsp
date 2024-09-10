@@ -175,6 +175,25 @@ public class EmployedDao {
     }
 
     /**
+     * Deletes multiple employees from the database.
+     * @param ids a comma-separated string of the ids of the employees to be deleted.
+     * @return the number of rows affected.
+     */
+    public int deleteMultipleEmployees(String ids) {
+        int result = 0;
+        try {
+            connection = MySqlConnectionPool.getConnection();
+            statement = connection.prepareStatement("DELETE FROM empleado WHERE id IN (" + ids + ")");
+            result = statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeResources();
+        }
+        return result;
+    }
+
+    /**
      * Counts the number of employees in the database.
      * @return the number of employees.
      */

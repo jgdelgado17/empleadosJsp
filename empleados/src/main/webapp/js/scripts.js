@@ -39,15 +39,13 @@ function focusAndMoveCursorToEnd() {
  * name. It also sets up the 'confirmDelete' button to redirect the user to a
  * URL that will delete the employee with the retrieved ID.
  */
-function setupDeleteModal() {
-    var modal = new bootstrap.Modal(document.getElementById('modalConfirm'));
-
+function setupModalDeleteOne() {
     document.getElementById('modalConfirm').addEventListener('show.bs.modal', function(event) {
         var button = event.relatedTarget;
         var employeeId = button.getAttribute('data-id');
         var employeeName = button.getAttribute('data-name');
 
-        document.getElementById('employeeName').textContent = employeeName;
+        document.getElementById('message').textContent = 'Are you sure you want to delete ' + employeeName + '?';
 
         /**
          * Redirects the user to a URL that will delete the employee with the
@@ -62,19 +60,67 @@ function setupDeleteModal() {
 }
 
 /**
- * This function is called when the window has finished loading.
- * It initializes the search input functionality, sets the focus on the search input field,
- * and sets up the delete confirmation modal.
+ * Sets up the delete confirmation modal for deleting multiple employees.
  *
- * @example
- * window.onload = function() {
- *     handleSearchInput();
- *     focusAndMoveCursorToEnd();
- *     setupDeleteModal();
- * };
+ * When the 'delete selected' button is clicked, it retrieves the IDs of the
+ * selected employees and updates the modal's content with the names.
+ * It also sets up the 'confirmDelete' button to redirect the user to a URL
+ * that will delete the selected employees.
+ */
+function setupModalDeleteMultiple() {
+    document.getElementById('deleteSelectedBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        // Retrieve the IDs of the selected employees.
+        var selectedCheckboxes = document.querySelectorAll('input[name="ids[]"]:checked');
+        var selectedIds = Array.from(selectedCheckboxes).map(function(checkbox) {
+            return checkbox.value;
+        });
+
+        // Verify that at least one employee is selected.
+        if (selectedIds.length === 0) {
+            alert('Please select at least one employee.');
+            return;
+        }
+
+        // Update the modal's content with the names of the selected employees.
+        var deleteBtn = document.getElementById('confirmDelete');
+        deleteBtn.setAttribute('data-ids', selectedIds.join(','));
+        var message = document.getElementById('message');
+        message.textContent = 'Are you sure you want to delete the following employees: ' + selectedIds.join(', ') + '?';
+
+        // Show the modal.
+        var modal = new bootstrap.Modal(document.getElementById('modalConfirm'));
+        modal.show();
+    });
+
+    /**
+     * Redirects the user to a URL that will delete the selected employees.
+     *
+     * @param {array<string>} selectedIds - The IDs of the employees to delete.
+     */
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        var selectedIds = this.getAttribute('data-ids');
+        if (selectedIds) {
+            window.location.href = 'EmployedController?' + ACTION + '=' + DELETE_MULTIPLE + '&ids=' + selectedIds;
+        }
+    });
+}
+
+
+/**
+ * Initialization code that is run when the page has finished loading.
+ * This code is responsible for attaching event listeners to the search
+ * input field and the delete buttons.
+ *
+ * @see handleSearchInput
+ * @see focusAndMoveCursorToEnd
+ * @see setupModalDeleteOne
+ * @see setupModalDeleteMultiple
  */
 window.onload = function() {
     handleSearchInput();
     focusAndMoveCursorToEnd();
-    setupDeleteModal();
+    setupModalDeleteOne();
+    setupModalDeleteMultiple();
 };

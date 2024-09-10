@@ -17,6 +17,7 @@
         <title>New employee</title>
     </head>
     <body>
+        <jsp:include page="../shared/messages.jsp" />
         <div class="container">
             <div class="card">
                 <div class="card-body">
