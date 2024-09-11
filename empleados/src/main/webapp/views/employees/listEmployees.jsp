@@ -150,8 +150,11 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-end mt-3">
+                    <div class="d-flex justify-content-end">
                         <a href="#" id="deleteSelectedBtn" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete Selected</a>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <p class="fw-bold text-secondary">Total records: ${totalEmployees}</p>
                     </div>
 
                     <div class="d-flex justify-content-center">

@@ -120,6 +120,7 @@ public class EmployedController extends HttpServlet {
         request.setAttribute("employees", employees);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalEmployees", totalEmployees);
 
         request.getRequestDispatcher(PAGE_LIST).forward(request, response);
     }
