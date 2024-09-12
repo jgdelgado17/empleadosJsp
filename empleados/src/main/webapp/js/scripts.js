@@ -63,41 +63,54 @@ function setupModalDeleteOne() {
  * Sets up the delete confirmation modal for deleting multiple employees.
  *
  * When the 'delete selected' button is clicked, it retrieves the IDs of the
- * selected employees and updates the modal's content with the names.
- * It also sets up the 'confirmDelete' button to redirect the user to a URL
- * that will delete the selected employees.
+ * selected checkboxes and updates the modal's content with the names of the
+ * selected employees. It also sets up the 'confirmDelete' button to redirect
+ * the user to a URL that will delete the selected employees.
  */
 function setupModalDeleteMultiple() {
     document.getElementById('deleteSelectedBtn').addEventListener('click', function(event) {
         event.preventDefault();
 
-        // Retrieve the IDs of the selected employees.
-        var selectedCheckboxes = document.querySelectorAll('input[name="ids[]"]:checked');
-        var selectedIds = Array.from(selectedCheckboxes).map(function(checkbox) {
+        /**
+         * Retrieves the IDs of the selected checkboxes and joins them into a
+         * comma-separated string.
+         *
+         * @returns {string} The IDs of the selected checkboxes joined into a
+         * comma-separated string.
+         */
+        var selectedIds = Array.from(document.querySelectorAll('input[name="ids[]"]:checked')).map(function(checkbox) {
             return checkbox.value;
-        });
+        }).join(',');
 
-        // Verify that at least one employee is selected.
         if (selectedIds.length === 0) {
-            alert('Please select at least one employee.');
+            window.location.href = 'EmployedController?' + ACTION + '=' + DELETE_MULTIPLE + '&ids=' + selectedIds;
             return;
         }
 
-        // Update the modal's content with the names of the selected employees.
+        /**
+         * Retrieves the delete button and sets its 'data-ids' attribute to the
+         * comma-separated string of selected IDs.
+         */
         var deleteBtn = document.getElementById('confirmDelete');
-        deleteBtn.setAttribute('data-ids', selectedIds.join(','));
-        var message = document.getElementById('message');
-        message.textContent = 'Are you sure you want to delete the following employees: ' + selectedIds.join(', ') + '?';
+        deleteBtn.setAttribute('data-ids', selectedIds);
 
-        // Show the modal.
+        /**
+         * Retrieves the message element and sets its text content to a
+         * message that includes the selected IDs.
+         */
+        var message = document.getElementById('message');
+        message.textContent = 'Are you sure you want to delete the following employees: ' + selectedIds + '?';
+
+        /**
+         * Retrieves the modal and shows it.
+         */
         var modal = new bootstrap.Modal(document.getElementById('modalConfirm'));
         modal.show();
     });
 
     /**
-     * Redirects the user to a URL that will delete the selected employees.
-     *
-     * @param {array<string>} selectedIds - The IDs of the employees to delete.
+     * Sets up the 'confirmDelete' button to redirect the user to a URL that
+     * will delete the selected employees.
      */
     document.getElementById('confirmDelete').addEventListener('click', function() {
         var selectedIds = this.getAttribute('data-ids');

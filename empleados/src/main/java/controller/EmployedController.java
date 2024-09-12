@@ -271,9 +271,16 @@ public class EmployedController extends HttpServlet {
      * This method deletes multiple employees from the database using the
      * <code>employedDao</code> and redirects to the list page if to delete
      * is successful or forwards back to the list page if there's an error.
+     * If the request parameter "ids" is empty or null, it sets an error
+     * message in the session and redirects to the list page.
      */
     private void deleteMultipleEmployees(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String ids = request.getParameter("ids");
+        if (ids == null || ids.isEmpty()) {
+            request.getSession().setAttribute("error", "Please select at least one employee.");
+            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
+            return;
+        }
         int result = employedDao.deleteMultipleEmployees(ids);
         if (result > 0) {
             request.getSession().setAttribute("success", "Employees deleted");

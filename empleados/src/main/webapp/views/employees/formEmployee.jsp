@@ -41,7 +41,7 @@
                                 <label for="firstName" class="form-label fw-bold">First Name</label>
                                 <div class="input-group">
                                     <input value="${employee.firstName}" type="text" class="form-control border-primary" id="firstName" name="firstName" required>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('firstName').value='';">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('firstName').value='';" title="Clear first name">
                                         <i class="fa fa-times"></i>
                                     </button>
                                 </div>
@@ -50,7 +50,7 @@
                                 <label for="lastName" class="form-label fw-bold">Last Name</label>
                                 <div class="input-group">
                                     <input value="${employee.lastName}" type="text" class="form-control border-primary" id="lastName" name="lastName" required>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('lastName').value='';">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('lastName').value='';" title="Clear last name">
                                         <i class="fa fa-times"></i>
                                     </button>
                                 </div>
@@ -62,7 +62,7 @@
                                 <label for="entryDate" class="form-label fw-bold">Entry Date</label>
                                 <div class="input-group">
                                     <input value="${employee.entryDate}" type="date" class="form-control border-primary" id="entryDate" name="entryDate" required>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('entryDate').value='';">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('entryDate').value='';" title="Clear entry date">
                                         <i class="fa fa-times"></i>
                                     </button>
                                 </div>
@@ -71,7 +71,7 @@
                                 <label for="salary" class="form-label fw-bold">Salary</label>
                                 <div class="input-group">
                                     <input value="${employee.salary}" type="number" class="form-control border-primary" id="salary" name="salary" required>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('salary').value='';">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('salary').value='';" title="Clear salary">
                                         <i class="fa fa-times"></i>
                                     </button>
                                 </div>
@@ -79,10 +79,10 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>
+                            <button type="submit" class="btn btn-primary" title="${employee.id == null ? 'Save employee' : 'Update employee'}"><i class="fa fa-save"></i>
                                 ${employee.id == null ? 'Save' : 'Update'}
                             </button>
-                            <button type="button" class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</button>
+                            <button type="button" class="btn btn-danger" onclick="history.back();" title="${employee.id == null ? 'Cancel new employee' : 'Cancel edit employee'}"><i class="fa fa-times"></i> Cancel</button>
                         </div>
                     </form>
                 </div>

@@ -47,12 +47,12 @@
                             <input type="text" id="searchByName" class="form-control-sm w-50 border-primary" placeholder="Type here to search by name or last name"
                                 name="searchByName" aria-label="Search by name or last name" aria-describedby="button-addon1" maxlength="50"
                                 value="${searchQuery != null ? searchQuery : ''}">
-                            <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage}" class="btn btn-outline-secondary"><i class="fa fa-times"></i></a>
+                            <a href="EmployedController?<%= ACTION %>=<%= LIST %>&<%= ORDER_BY %>=${fieldSort}&orderDirection=${orderDirection}&<%= PAGE %>=${currentPage}" class="btn btn-outline-secondary" title="Clear search"><i class="fa fa-times"></i></a>
                         </div>
 
-                        <div class="d-flex justify-content-end mb-3 ms-5">
-                            <a href="EmployedController?<%= ACTION %>=<%= CREATE %>" class="btn btn-info btn-sm">
-                                <i class="fa fa-plus-circle "></i> New <i class="fa-solid fa-user"></i>
+                        <div class="d-flex justify-content">
+                            <a href="EmployedController?<%= ACTION %>=<%= CREATE %>" class="btn btn-info" title="New employee">
+                                <i class="fa fa-plus-circle "></i></i>
                             </a>
                         </div>
                     </div>
@@ -136,9 +136,9 @@
                                         <td>${employed.entryDate}</td>
                                         <td>${employed.salary}</td>
                                         <td class="text-center">
-                                            <a href="EmployedController?<%= ACTION %>=<%= DETAILS %>&id=${employed.id}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Details</a>
-                                            <a href="EmployedController?<%= ACTION %>=<%= EDIT %>&id=${employed.id}" class="btn btn-success btn-sm"><i class="fa fa-pencil"></i> Edit</a>
-                                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalConfirm" data-id="${employed.id}" data-name="${employed.firstName} ${employed.lastName} with id ${employed.id}"><i class="fa fa-trash"></i> Delete</a>
+                                            <a href="EmployedController?<%= ACTION %>=<%= DETAILS %>&id=${employed.id}" class="btn btn-info btn-sm" title="Details employee"><i class="fa fa-eye"></i></a>
+                                            <a href="EmployedController?<%= ACTION %>=<%= EDIT %>&id=${employed.id}" class="btn btn-success btn-sm" title="Edit employee"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalConfirm" data-id="${employed.id}" data-name="${employed.firstName} ${employed.lastName} with id ${employed.id}" title="Delete employee"><i class="fa fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -148,13 +148,13 @@
                                     </tr>
                                 </c:if>
                             </tbody>
+                            <div class="d-flex align-items-center">
+                                <div class="input-group">
+                                    <a href="#" id="deleteSelectedBtn" class="btn btn-danger btn-sm" title="Delete employees selected"><i class="fa fa-trash"></i> Selected</a>
+                                </div>
+                                <p class="fw-bold text-secondary">Records:${totalEmployees}</p>
+                            </div>
                         </table>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <a href="#" id="deleteSelectedBtn" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete Selected</a>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <p class="fw-bold text-secondary">Total records: ${totalEmployees}</p>
                     </div>
 
                     <div class="d-flex justify-content-center">
