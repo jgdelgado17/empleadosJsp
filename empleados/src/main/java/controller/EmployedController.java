@@ -220,7 +220,7 @@ public class EmployedController extends HttpServlet {
      * and redirects to the list page if the update is successful or forwards back
      * to the form page if there's an error.
      */
-    private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Employed employed = Employed.builder()
                 .id(Integer.parseInt(request.getParameter("id")))
                 .firstName(request.getParameter("firstName"))
@@ -231,10 +231,12 @@ public class EmployedController extends HttpServlet {
         int result = employedDao.updateEmployed(employed);
         if (result > 0) {
             request.getSession().setAttribute("success", "Employee with id " + employed.getId() + " updated");
+            response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
         } else {
-            request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " not found");
+            request.getSession().setAttribute("error", "Employee with id " + employed.getId() + " was not updated");
+            request.setAttribute("employee", employed);
+            request.getRequestDispatcher(PAGE_FORM).forward(request, response);
         }
-        response.sendRedirect(BuildUrl.employees(request, LIST, fieldSort, orderDirection, currentPage));
     }
 
     /**

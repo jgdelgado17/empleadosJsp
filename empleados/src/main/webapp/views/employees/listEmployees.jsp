@@ -40,7 +40,8 @@
         <div class="container mt-3">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title text-center fw-bold mt-3">List of employees <i class="fa-solid fa-user"></i></h4>
+                    <h4 class="card-title text-center fw-bold">List of employees <i class="fa-solid fa-user"></i></h4>
+                    <p class="fw-bold text-secondary text-center">Total employees: ${totalEmployees}</p>
                     <div class="d-flex align-items-center">
                         <div class="input-group">
                             <input type="hidden" name="action" value="${SEARCH}">
@@ -69,7 +70,7 @@
                     <jsp:include page="../shared/messages.jsp" />
                     <jsp:include page="../shared/modalConfirmation.jsp" />
 
-                    <div class="table-responsive-lg">
+                    <div class="table-responsive-lg mt-1">
                         <table class="table" id="employeesTable" >
                             <thead class="table-dark text-center">
                                 <tr>
@@ -148,13 +149,10 @@
                                     </tr>
                                 </c:if>
                             </tbody>
-                            <div class="d-flex align-items-center">
-                                <div class="input-group">
-                                    <a href="#" id="deleteSelectedBtn" class="btn btn-danger btn-sm" title="Delete employees selected"><i class="fa fa-trash"></i> Selected</a>
-                                </div>
-                                <p class="fw-bold text-secondary">Records:${totalEmployees}</p>
-                            </div>
                         </table>
+                        <div class="d-flex justify-content-center">
+                            <a href="#" id="deleteSelectedBtn" class="btn btn-danger btn-sm" title="Delete employees selected"><i class="fa fa-trash"></i> Selected</a>
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-center">

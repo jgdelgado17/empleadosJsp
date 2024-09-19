@@ -70,7 +70,7 @@
                             <div class="mb-3 w-50 mx-auto">
                                 <label for="salary" class="form-label fw-bold">Salary</label>
                                 <div class="input-group">
-                                    <input value="${employee.salary}" type="number" class="form-control border-primary" id="salary" name="salary" required>
+                                    <input value="${employee.salary}" type="number" step="0.01" class="form-control border-primary" id="salary" name="salary" required>
                                     <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('salary').value='';" title="Clear salary">
                                         <i class="fa fa-times"></i>
                                     </button>
