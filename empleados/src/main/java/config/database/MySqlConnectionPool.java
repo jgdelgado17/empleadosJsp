@@ -6,7 +6,7 @@ public class MySqlConnectionPool {
 
     /**
      * Returns a connection to the database using the properties defined in
-     * the application.properties file.
+     * the database.properties file.
      *
      * @return a connection to the database
      */

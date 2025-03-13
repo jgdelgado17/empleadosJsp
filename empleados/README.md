@@ -71,6 +71,7 @@ To configure the application, you need to edit the **application.properties** an
 ## Example of Use
 
 To use the application, simply access the application URL and use the user interface to interact with the application.
+In this case the URL is: http://localhost:8080/employees
 
 ## Conclusion
 
