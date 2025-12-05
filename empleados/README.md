@@ -53,6 +53,9 @@ The application implements a CRUD for data management, which includes:
 *   **DAO**: Data access pattern used to encapsulate data access logic.
 *   **Servlets**: Used to receive and process user requests.
 *   **JSP**: Used to render the user interface and display data.
+*   **JSP Standard Tag Library (JSTL)**: Provides tags for conditionals, loops, and clean JSP logic.
+*   **Bootstrap 5.3.3**: Framework CSS Used for responsive layout, styling, grid system, and UI components.
+*   **Font Awesome 6.6.0**: Provides scalable icons for actions like edit, delete, save, etc.
 *   **JavaScript**: Used to manage user interface functions, such as:
     + Keeping the cursor in the search bar.
     + Rendering the list of results in real-time while typing in the search bar.
